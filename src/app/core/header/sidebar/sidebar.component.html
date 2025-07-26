@@ -1,1 +1,136 @@
-<p>sidebar works!</p>
+<aside
+  class="app-sidebar"
+  [class.collapsed]="isCollapsed()"
+  [class.mobile-open]="isMobileOpen()"
+  aria-label="Main navigation sidebar"
+  id="sidebar-navigation"
+>
+  <div class="sidebar-header">
+    <div class="user-info">
+      <img [src]="currentUser().avatar" alt="User Avatar" class="user-avatar" />
+      <div class="user-details">
+        <span class="user-name">{{ currentUser().name }}</span>
+        <span class="user-role">{{ currentUser().role | titlecase }}</span>
+      </div>
+    </div>
+    <button
+      class="toggle-button"
+      (click)="toggleSidebar.emit()"
+      [attr.aria-label]="isCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+      aria-controls="sidebar-navigation"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        class="w-6 h-6"
+      >
+        @if (isCollapsed()) {
+          <path
+            fill-rule="evenodd"
+            d="M4.5 5.625A2.625 2.625 0 0 1 7.125 3h13.75a.75.75 0 0 1 .75.75v12a.75.75 0 0 1-.75.75H7.125A2.625 2.625 0 0 1 4.5 16.375v-10.75ZM4.875 1.5a.75.75 0 0 0 0 1.5h6.75a.75.75 0 0 0 0-1.5h-6.75ZM9 12a.75.75 0 0 0 0 1.5h6.75a.75.75 0 0 0 0-1.5H9Zm-.75 3.75a.75.75 0 0 0 0 1.5h6.75a.75.75 0 0 0 0-1.5h-6.75Z"
+            clip-rule="evenodd"
+          />
+        } @else {
+          <path
+            fill-rule="evenodd"
+            d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12ZM3.75 16.5a.75.75 0 0 0 0 1.5h16.5a.75.75 0 0 0 0-1.5H3.75Z"
+            clip-rule="evenodd"
+          />
+        }
+      </svg>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul class="main-menu" role="menubar">
+      @for (item of menuItems(); track item.id) {
+        <li
+          class="menu-item"
+          [class.active]="isActive(item)"
+          [class.has-children]="item.children && item.children.length > 0"
+          [class.expanded]="item.isExpanded"
+          role="none"
+        >
+          <a
+            [routerLink]="item.route"
+            [routerLinkActive]="['active-link']"
+            (click)="onMenuItemClick(item, $event)"
+            [attr.aria-expanded]="item.children && item.children.length > 0 ? item.isExpanded : null"
+            [attr.aria-controls]="item.children && item.children.length > 0 ? 'submenu-' + item.id : null"
+            [attr.aria-label]="item.label"
+            tabindex="0"
+            role="menuitem"
+            [ngStyle]="
+              isCollapsed()
+                ? { 'white-space': 'nowrap', 'overflow': 'hidden' }
+                : null
+            "
+          >
+            <i class="menu-icon" [class]="getIconClass(item.icon)" aria-hidden="true"></i>
+            <span class="menu-label">{{ item.label }}</span>
+            @if (item.badge && item.badge > 0) {
+              <span class="menu-badge" [class]="getBadgeClass(item.id)">{{ item.badge }}</span>
+            }
+            @if (item.children && item.children.length > 0 && !isCollapsed()) {
+              <span class="expand-icon">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  class="w-5 h-5"
+                  [class.rotated]="item.isExpanded"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </span>
+            }
+          </a>
+
+          @if (item.children && item.children.length > 0 && item.isExpanded) {
+            <ul
+              class="submenu"
+              [class.collapsed]="isCollapsed()"
+              [id]="'submenu-' + item.id"
+              role="menu"
+            >
+              @for (child of item.children; track child.id) {
+                <li class="submenu-item" [class.active]="isActive(child)" role="none">
+                  
+                    [routerLink]="child.route"
+                    [routerLinkActive]="['active-link']"
+                    (click)="onMenuItemClick(child, $event)" <!-- CORRECTED: Use onMenuItemClick for children -->
+                    [attr.aria-label]="child.label"
+                    tabindex="0"
+                    role="menuitem"
+                  >
+                    <i class="submenu-icon" [class]="getIconClass(child.icon)" aria-hidden="true"></i>
+                    <span class="submenu-label">{{ child.label }}</span>
+                    @if (child.badge && child.badge > 0) {
+                      <span class="menu-badge" [class]="getBadgeClass(child.id)">{{ child.badge }}</span>
+                    }
+                 
+                </li>
+              }
+            </ul>
+          }
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <!-- Tooltips for collapsed state -->
+  @if (isCollapsed()) {
+    <div class="tooltip-container">
+      @for (item of menuItems(); track item.id) {
+        <span class="tooltip-text" [attr.data-menu-id]="item.id">
+          {{ item.label }}
+        </span>
+      }
+    </div>
+  }
+</aside>

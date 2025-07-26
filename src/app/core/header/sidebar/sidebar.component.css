@@ -1,0 +1,349 @@
+.app-sidebar {
+  width: 280px;
+  background-color: #ffffff; /* Card background */
+  color: #1e293b; /* slate-800 */
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease-in-out;
+  overflow-x: hidden; /* Hide horizontal scrollbar when collapsing */
+  position: relative;
+  z-index: 10;
+}
+
+.app-sidebar.collapsed {
+  width: 64px;
+}
+
+/* Mobile Overlay Styles */
+@media (max-width: 767px) {
+  .app-sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px; /* Hidden off-screen */
+    bottom: 0;
+    z-index: 1000; /* Ensure it's above everything else */
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.2);
+    transition: left 0.3s ease-in-out;
+  }
+
+  .app-sidebar.mobile-open {
+    left: 0; /* Slide in */
+  }
+
+  /* When mobile, ensure it's in expanded state for usability */
+  .app-sidebar.mobile-open.collapsed {
+    width: 280px;
+  }
+}
+
+.sidebar-header {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e2e8f0; /* slate-200 */
+  min-height: 64px; /* Matches header height */
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  overflow: hidden; /* Ensure text doesn't overflow when collapsed */
+  white-space: nowrap;
+}
+
+.app-sidebar.collapsed .user-info {
+  width: 0; /* Hide user info when collapsed */
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1e293b;
+}
+
+.user-role {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.toggle-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s ease;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.toggle-button:hover,
+.toggle-button:focus {
+  background-color: #f0f4f8;
+  outline: none;
+}
+
+/* Navigation Menu */
+.sidebar-nav {
+  flex-grow: 1; /* Allow menu to take remaining space */
+  overflow-y: auto; /* Enable scrolling for long menus */
+  padding: 0.5rem 0;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.sidebar-nav::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.main-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-item {
+  position: relative;
+}
+
+.menu-item a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: #64748b; /* slate-500 */
+  text-decoration: none;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+  border-left: 4px solid transparent;
+  white-space: nowrap; /* Prevent wrapping */
+  overflow: hidden; /* Hide overflow content */
+  text-overflow: ellipsis; /* Add ellipsis for overflow */
+}
+
+.menu-item a:hover,
+.menu-item a:focus {
+  background-color: #f0f4f8; /* slate-100 */
+  color: #1e293b; /* slate-800 */
+  outline: none;
+}
+
+.menu-item .active-link {
+  background-color: #e0e7ff; /* blue-100 */
+  color: #1e40af; /* blue-700 */
+  border-left-color: #1e40af; /* blue-700 */
+  font-weight: 600;
+}
+
+.menu-item .active-link .menu-icon {
+  color: #1e40af; /* blue-700 */
+}
+
+.menu-icon,
+.submenu-icon {
+  width: 24px;
+  height: 24px;
+  font-size: 1.25rem; /* For font icons */
+  color: #64748b;
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.menu-item .active-link .menu-icon {
+  color: #1e40af;
+}
+
+.menu-label,
+.submenu-label {
+  flex-grow: 1;
+  transition: opacity 0.3s ease;
+}
+
+.app-sidebar.collapsed .menu-label,
+.app-sidebar.collapsed .submenu-label {
+  opacity: 0;
+  pointer-events: none;
+  width: 0; /* Collapse text width */
+}
+
+/* Badge Styling */
+.menu-badge {
+  background-color: #dc2626; /* red-600 (default for critical alerts) */
+  color: #ffffff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.75rem; /* rounded-full */
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 600;
+  margin-left: auto; /* Push to right */
+  flex-shrink: 0;
+  min-width: 20px;
+  text-align: center;
+  line-height: 1;
+}
+
+.app-sidebar.collapsed .menu-badge {
+  margin-left: 0.5rem; /* Adjust position when collapsed */
+}
+
+.menu-badge.bg-red-500 {
+  background-color: #dc2626; /* secondary: red-600 */
+}
+.menu-badge.bg-green-500 {
+  background-color: #16a34a; /* success: green-600 */
+}
+.menu-badge.bg-yellow-500 {
+  background-color: #ca8a04; /* warning: yellow-600 */
+}
+.menu-badge.bg-blue-500 {
+  background-color: #1e40af; /* primary: blue-700 */
+}
+
+
+.expand-icon {
+  display: flex;
+  align-items: center;
+  margin-left: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.expand-icon svg {
+  width: 20px;
+  height: 20px;
+  color: #64748b;
+}
+
+.expand-icon.rotated {
+  transform: rotate(180deg);
+}
+
+/* Submenu */
+.submenu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background-color: #f8fafc; /* slate-50 */
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.menu-item.expanded > .submenu {
+  max-height: 1000px; /* Arbitrary large value for smooth transition */
+}
+
+.submenu-item a {
+  padding: 0.75rem 1rem 0.75rem 2.5rem; /* Indent submenu items */
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.submenu-item .active-link {
+  background-color: #e0e7ff;
+  border-left-color: #1e40af;
+}
+
+.submenu-icon {
+  font-size: 1rem; /* Smaller icons for submenu */
+}
+
+/* Tooltips for collapsed state */
+.tooltip-container {
+  position: absolute;
+  top: 0;
+  left: 64px; /* Position next to collapsed sidebar */
+  height: 100%;
+  width: 200px; /* Width for tooltip content */
+  pointer-events: none; /* Do not block clicks on sidebar */
+  z-index: 100;
+}
+
+.app-sidebar.collapsed .menu-item a:hover + .tooltip-text,
+.app-sidebar.collapsed .menu-item a:focus + .tooltip-text {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+.tooltip-text {
+  position: absolute;
+  background-color: #1e293b; /* slate-800 */
+  color: #ffffff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-10px);
+  transition:
+    opacity 0.2s ease-out,
+    transform 0.2s ease-out,
+    visibility 0.2s ease-out;
+  left: 5px; /* Adjust relative to toggle button */
+  top: var(--menu-item-top, 0); /* Dynamic positioning */
+  margin-top: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 101;
+}
+
+/* Dynamic positioning for tooltips */
+.menu-item:hover .tooltip-text {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+/* CSS for menu item hover to show tooltip based on data attribute */
+.app-sidebar.collapsed .menu-item a {
+  position: relative; /* Needed for tooltip positioning */
+}
+
+.app-sidebar.collapsed .menu-item a::after {
+  content: attr(aria-label); /* Use aria-label for tooltip content */
+  position: absolute;
+  left: calc(100% + 10px); /* Position to the right of the collapsed icon */
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #1e293b;
+  color: #ffffff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 102;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.2s ease-out,
+    visibility 0.2s ease-out;
+  pointer-events: none; /* Ensure it doesn't block clicks */
+}
+
+.app-sidebar.collapsed .menu-item a:hover::after,
+.app-sidebar.collapsed .menu-item a:focus::after {
+  opacity: 1;
+  visibility: visible;
+}
